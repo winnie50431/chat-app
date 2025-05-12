@@ -1,7 +1,7 @@
 <template>
-  <ChatComponent />
+  <ChatItem />
 </template>
 
 <script setup>
-import ChatComponent from './components/ChatComponent.vue'
+import ChatItem from './components/ChatItem.vue'
 </script>
