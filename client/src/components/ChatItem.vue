@@ -6,14 +6,19 @@
         @keyup.enter="setUser"
         placeholder="請輸入你的名字..."
       />
-      <button @click="setUser">開始聊天</button>
+      <button class="chat-button" @click="setUser">開始聊天</button>
     </div>
     <div v-else>
       <div class="chat-header">
         <span>歡迎, {{ userName }}</span>
       </div>
       <div class="chat-messages">
-        <div v-for="(msg, index) in messages" :key="index" class="message">
+        <div 
+          v-for="(msg, index) in messages" 
+          :key="index" 
+          class="message"
+          :class="{ 'message-own': msg.user?.id === userId }"
+        >
           <div class="message-header">
             <span class="username">{{ msg.user?.name || '未知使用者' }}</span>
             <span class="timestamp">{{ formatTime(msg.timestamp) }}</span>
@@ -36,7 +41,7 @@
 import { ref, onMounted } from 'vue'
 import { io } from 'socket.io-client'
 
-const socket = io('http://localhost:3000')
+const socket = io('https://chat-server-ckpa.onrender.com')
 const messages = ref([])
 const newMessage = ref('')
 const userName = ref('')
@@ -93,9 +98,27 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$dark-gray: #343A40;
+$blue: #3B7DCD;
+$white: #FFFFFF;
+$light-gray: #F8F9FA;
+
+.chat-button {
+  background: $blue;
+  color: $white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-button:hover {
+  cursor: pointer;
+}
+
 .chat-container {
-  max-width: 800px;
+  max-width: 400px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -110,6 +133,8 @@ onMounted(() => {
   padding: 10px;
   border-radius: 8px 8px 0 0;
   margin-bottom: 10px;
+  background: $dark-gray;
+  color: $white;  
 }
 
 .chat-messages {
@@ -119,11 +144,18 @@ onMounted(() => {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 0 0 8px 8px;
+  background: $light-gray;
 }
 
 .message {
   margin-bottom: 15px;
   padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-own {
+  align-items: flex-end;
 }
 
 .message-header {
@@ -144,9 +176,18 @@ onMounted(() => {
 }
 
 .message-content {
-  margin-left: 32px;
-  background: #aaa;
-  border-radius: 8px;
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #E9ECEF;
+  color: #333;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+
+.message-own .message-content {
+  background: $blue;
+  color: $white;
 }
 
 .chat-input {
@@ -171,6 +212,6 @@ button {
 }
 
 button:hover {
-  background: #45a049;
+  background: #646cff;
 }
 </style>
